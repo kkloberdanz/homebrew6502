@@ -51,6 +51,8 @@ uint8_t get_data_byte(void) {
 
 
 void pulse_clock() {
+  digitalWrite(CLOCK, LOW);
+  delay(1);
   digitalWrite(CLOCK, HIGH);
   delay(1);
   digitalWrite(CLOCK, LOW);
@@ -93,23 +95,33 @@ void print_lower_address() {
 void loop() {
 
   /* Loop until 6502 address lines are 0000 */
-  uint16_t num_loops = 5402;
-  while (num_loops > 0) {
+  for (uint16_t num_loops = 5402; num_loops > 0; num_loops--) {
     pulse_clock();
     pulse_clock();
-    print_lower_address();
-    num_loops--;
   }
 
   /* address lines now point to 0000 */
   Serial.println("*** Back to zero ***");
   delay(10000);
 
-  num_loops = 0xffff;
-  while (num_loops) {
-    num_loops--;
+  char message[15];
+  for (uint16_t current_address = 0;
+                current_address <= 0xffff;
+                current_address++) {
+    /*
+     * Write each byte one at a time
+     * from 0x0000 to 0xffff here
+     */
     pulse_clock();
     pulse_clock();
-    print_lower_address();
+    sprintf(message, "Address: %04x\n", current_address);
+    Serial.print(message);
   }
+
+  print_lower_address();
+  Serial.println("*** Done Programming, exiting ***");
+
+  delay(86400);
+
+  exit(0);
 }
