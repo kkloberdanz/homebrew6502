@@ -101,12 +101,13 @@ void loop() {
   }
 
   /* address lines now point to 0000 */
-  Serial.println("*** Back to zero ***");
+  Serial.println("*** Ready ***");
   delay(10000);
+  Serial.println("*** Programming ***");
 
   char message[15];
   for (uint16_t current_address = 0;
-                current_address <= 0xffff;
+                current_address < 0xffff;
                 current_address++) {
     /*
      * Write each byte one at a time
@@ -114,11 +115,10 @@ void loop() {
      */
     pulse_clock();
     pulse_clock();
-    sprintf(message, "Address: %04x\n", current_address);
-    Serial.print(message);
+    //sprintf(message, "Address: %04x\n", current_address);
+    //Serial.print(message);
   }
 
-  print_lower_address();
   Serial.println("*** Done Programming, exiting ***");
 
   delay(86400);
