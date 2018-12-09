@@ -89,18 +89,27 @@ void print_lower_address() {
   Serial.print(message);
 }
 
-uint32_t num_loops = 5402;
 
 void loop() {
-  pulse_clock();
-  pulse_clock();
-  print_lower_address();
-  num_loops--;
-  if (num_loops == 0) {
-    Serial.println("*** Back to zero ***");
-    num_loops = 0xffff + 1;
-    delay(1800000);
 
-    /* Counting up from address 0 here */
+  /* Loop until 6502 address lines are 0000 */
+  uint16_t num_loops = 5402;
+  while (num_loops > 0) {
+    pulse_clock();
+    pulse_clock();
+    print_lower_address();
+    num_loops--;
+  }
+
+  /* address lines now point to 0000 */
+  Serial.println("*** Back to zero ***");
+  delay(10000);
+
+  num_loops = 0xffff;
+  while (num_loops) {
+    num_loops--;
+    pulse_clock();
+    pulse_clock();
+    print_lower_address();
   }
 }
